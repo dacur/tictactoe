@@ -82,13 +82,26 @@ class Game
 		end
 	end
 
+	def play_again?
+		"Would you like to play again (y/n)? ".slow
+		play = gets.chomp.downcase
+		if play == "y"
+			initialize
+			goes_first?
+		elsif play == "n"
+			exit
+		else
+			play_again?
+		end
+	end
+
 	def game_over
 		if @current_player == "player"
 			puts "You win!"
-			exit
+			play_again?
 		else
 			puts "Haha, I win!"
-			exit
+			play_again?
 		end
 	end
 
@@ -115,6 +128,7 @@ class Board
 		@seven = " "
 		@eight = " "
 		@nine = " "
+		@current_board = []
 	end
 
 	def clean
