@@ -6,6 +6,8 @@ class Game
 	def initialize
 		@board = Board.new
 		@available = [1,2,3,4,5,6,7,8,9]
+		@player_moves = []
+		@robot_moves = []
 	end
 
 	def start
@@ -34,12 +36,11 @@ class Game
 		@first = gets.chomp.downcase
 		if @first == "y"
 			"Great, you can go first!\n".slow
-			@first = true
-			play
+			choose
 		elsif @first == "n"
-			"Great, I will go first!\n".slow
+			"Okay, I will go first!\n".slow
 			@first = false
-			play
+			robot_turn
 		else
 			goes_first?
 		end
@@ -60,16 +61,45 @@ class Game
 		if @available.include? @choice.to_i
 			"#{@choice} is available!\n".slow
 			@available = @available - [@choice.to_i]
+			@player_moves.push(@choice.to_i)
 			@board.play(@choice, "X")
-			choose
+			@current_player = "player"
+			check_status(@player_moves)
+			robot_turn
 		else
-			"#{@choice} is not available! Please choose again.\n"
+			"#{@choice} is not available! Please choose again.\n".slow
 			choose
 		end
 	end
 
-	def play
-		@board.clean
+	def check_status(moves)
+		@winning_combos = [[1,2,3], [4,5,6], [7,8,9], [1,4,7], [2,5,8], [3,6,9], [1,5,9], [3,5,7]]
+		@moves = moves.sort
+		@winning_combos.each do |wc|
+			if @moves == wc
+				game_over
+			end
+		end
+	end
+
+	def game_over
+		if @current_player == "player"
+			puts "You win!"
+			exit
+		else
+			puts "Haha, I win!"
+			exit
+		end
+	end
+
+	def robot_turn
+		@choice = @available.sample
+		@available = @available - [@choice.to_i]
+		"My turn! I chose space #{@choice}.\n".slow
+		@robot_moves.push(@choice.to_i)
+		@board.play(@choice, "O")
+		@current_player = "robot"
+		check_status(@robot_moves)
 		choose
 	end
 end
@@ -86,6 +116,7 @@ class Board
 		@eight = " "
 		@nine = " "
 	end
+
 	def clean
 		puts "_|_|_\n_|_|_\n | | "
 	end
@@ -137,7 +168,7 @@ class Chatter
 		"Hello! Welcome to TicTacToe. What is your name? ".slow
 		@name = gets.chomp
 		"Hello, #{@name}! My, you look \e[1msmashing\e[0m today!\n".slow
-		"I'm going to start off by showing you the playing board. Any time you want to see it again, simply type 'board'.\n".slow
+		"I'm going to start off by showing you the playing board.\n".slow
 		@board = Board.new
 		board.positions
 	end
