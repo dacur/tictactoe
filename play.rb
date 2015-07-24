@@ -76,7 +76,6 @@ class Game
 
 	def check_status(moves)
 		@moves = moves.sort
-		puts "Moves are #{@moves}"
 		@winning_combos.each do |wc|
 			wc = wc - @moves
 			if wc.empty?
@@ -115,15 +114,8 @@ class Game
 	def robot_turn
 		#loop through winning combos and see if player moves contains 2 of 3. if so, play 3rd space.  if not, play 1st preferred space available.
 		@choice = nil
-		@winning_combos.each do |wc|
-			@remainder = wc - @player_moves
-			if @remainder.size == 1 && @available.include?(@remainder[0])
-				puts "Player is about to win! Play #{@remainder[0]}"
-				@choice = @remainder[0]
-				break
-			end
-		end
-
+		
+		#if robot can win, it will do so.
 		@winning_combos.each do |wc|
 			@remainder = wc - @robot_moves
 			if @remainder.size == 1 && @available.include?(@remainder[0])
@@ -133,17 +125,27 @@ class Game
 			end
 		end
 
+		#if not and player can win, it will block player.
+		@winning_combos.each do |wc|
+			@remainder = wc - @player_moves
+			if @remainder.size == 1 && @available.include?(@remainder[0])
+				puts "Player is about to win! Play #{@remainder[0]}"
+				@choice = @remainder[0]
+				break
+			end
+		end
+
+		#if neither are true, robot will play next best move.
 		if @choice == nil
 			"Nothing to see here. Choosing best remaining space."
 			preferred_remaining = @preferred_spaces - (@player_moves + @robot_moves)
 			@choice = preferred_remaining[0]
 		end
 
-
-		@available = @available - [@choice.to_i]
-		
+		@available = @available - [@choice.to_i]		
 		"I choose space #{@choice}.\n".slow
 		@robot_moves.push(@choice.to_i)
+		
 		@board.play(@choice, "O")
 		@current_player = "robot"
 		check_status(@robot_moves)
