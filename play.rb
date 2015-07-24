@@ -8,6 +8,8 @@ class Game
 		@available = [1,2,3,4,5,6,7,8,9]
 		@player_moves = []
 		@robot_moves = []
+		@winning_combos = [[1,2,3], [4,5,6], [7,8,9], [1,4,7], [2,5,8], [3,6,9], [1,5,9], [3,5,7]]
+		@preferred_spaces = [5,1,3,7,9,2,4,6,8]
 	end
 
 	def start
@@ -73,12 +75,17 @@ class Game
 	end
 
 	def check_status(moves)
-		@winning_combos = [[1,2,3], [4,5,6], [7,8,9], [1,4,7], [2,5,8], [3,6,9], [1,5,9], [3,5,7]]
 		@moves = moves.sort
+		puts "Moves are #{@moves}"
 		@winning_combos.each do |wc|
-			if @moves == wc
+			wc = wc - @moves
+			if wc.empty?
 				game_over
 			end
+		end
+		if @available == []
+			puts "It's a tie!"
+			play_again?
 		end
 	end
 
@@ -106,15 +113,43 @@ class Game
 	end
 
 	def robot_turn
-		@choice = @available.sample
+		#loop through winning combos and see if player moves contains 2 of 3. if so, play 3rd space.  if not, play 1st preferred space available.
+		@choice = nil
+		@winning_combos.each do |wc|
+			@remainder = wc - @player_moves
+			if @remainder.size == 1 && @available.include?(@remainder[0])
+				puts "Player is about to win! Play #{@remainder[0]}"
+				@choice = @remainder[0]
+				break
+			end
+		end
+
+		@winning_combos.each do |wc|
+			@remainder = wc - @robot_moves
+			if @remainder.size == 1 && @available.include?(@remainder[0])
+				puts "I'm going to win! Play #{@remainder[0]}"
+				@choice = @remainder[0]
+				break
+			end
+		end
+
+		if @choice == nil
+			"Nothing to see here. Choosing best remaining space."
+			preferred_remaining = @preferred_spaces - (@player_moves + @robot_moves)
+			@choice = preferred_remaining[0]
+		end
+
+
 		@available = @available - [@choice.to_i]
-		"My turn! I chose space #{@choice}.\n".slow
+		
+		"I choose space #{@choice}.\n".slow
 		@robot_moves.push(@choice.to_i)
 		@board.play(@choice, "O")
 		@current_player = "robot"
 		check_status(@robot_moves)
-		choose
+		choose #player's turn
 	end
+
 end
 
 class Board
@@ -196,6 +231,7 @@ end
 
 game = Game.new
 game.start
+
 # @one = @two = @three = @four = @five = @six = @seven = @eight = @nine = " "
 # @five = "X"
 # @five = "O"
