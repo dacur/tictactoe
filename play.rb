@@ -117,17 +117,17 @@ class Game
 		end
 
 		#if not and player can win, it will block player.
-		@winning_combos.each do |wc|
-			@remainder = wc - @player_moves
-			if @remainder.size == 1 && @available.include?(@remainder[0])
-				@choice = @remainder[0]
-				break
+		if @choice == nil
+			@winning_combos.each do |wc|
+				@remainder = wc - @player_moves
+				if @remainder.size == 1 && @available.include?(@remainder[0])
+					@choice = @remainder[0]
+					break
+				end
 			end
 		end
-
 		#if neither are true, robot will play next best move.
 		if @choice == nil
-			#"Nothing to see here. Choosing best remaining space."
 			preferred_remaining = @preferred_spaces - (@player_moves + @robot_moves)
 			@choice = preferred_remaining[0]
 		end
