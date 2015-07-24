@@ -208,7 +208,7 @@ end
 
 class String
 	def slow
-		each_char {|c| putc c ; sleep 0.01; $stdout.flush }
+		each_char {|c| putc c ; sleep 0.05; $stdout.flush }
 	end
 end
 
