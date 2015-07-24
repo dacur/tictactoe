@@ -1,4 +1,73 @@
 # Player 1 is X, Player 2 is O
+class Board
+	def initialize
+		@one = " "
+		@two = " "
+		@three = " "
+		@four = " "
+		@five = " "
+		@six = " "
+		@seven = " "
+		@eight = " "
+		@nine = " "
+		@current_board = []
+	end
+
+	def clean
+		puts "_|_|_\n_|_|_\n | | "
+	end
+
+	def play(position, player)
+		case position.to_i
+		when 1
+			@one = player
+		when 2
+			@two = player
+		when 3
+			@three = player
+		when 4
+			@four = player
+		when 5
+			@five = player
+		when 6
+			@six = player
+		when 7
+			@seven = player
+		when 8
+			@eight = player
+		when 9
+			@nine = player
+		else 
+			return
+		end
+		@current_board = ["\e[4m#{@one}\e[0m|","\e[4m#{@two}\e[0m|","\e[4m#{@three}\e[0m\n","\e[4m#{@four}\e[0m|","\e[4m#{@five}\e[0m|","\e[4m#{@six}\e[0m\n","#{@seven}|","#{@eight}|","#{@nine}\n"]
+		@current_board.each do |b|
+			print b
+		end
+	end
+
+	def positions
+		puts "\e[4m1\e[0m|\e[4m2\e[0m|\e[4m3\e[0m\n\e[4m4\e[0m|\e[4m5\e[0m|\e[4m6\e[0m\n7|8|9"
+	end
+end
+
+class Chatter
+	attr_reader :name
+
+	def explain_board
+		"The board consists of nine positions represented by the numbers 1 through 9.\n".slow
+		"When it is your turn to play, simply enter the number of the open position you wish to play and then press Enter.\n".slow
+	end
+
+	def greeting
+		"Hello! Welcome to TicTacToe. What is your name? ".slow
+		@name = gets.chomp
+		"Hello, #{@name}! My, you look \e[1msmashing\e[0m today!\n".slow
+		"I'm going to start off by showing you the playing board.\n".slow
+		board = Board.new
+		board.positions
+	end
+end
 
 class Game
 	attr_accessor :first
@@ -150,79 +219,17 @@ class Game
 	end
 end
 
-class Board
-	def initialize
-		@one = " "
-		@two = " "
-		@three = " "
-		@four = " "
-		@five = " "
-		@six = " "
-		@seven = " "
-		@eight = " "
-		@nine = " "
-		@current_board = []
-	end
+class Player
+	attr_accessor :name
+end
 
-	def clean
-		puts "_|_|_\n_|_|_\n | | "
-	end
-
-	def play(position, player)
-		case position.to_i
-		when 1
-			@one = player
-		when 2
-			@two = player
-		when 3
-			@three = player
-		when 4
-			@four = player
-		when 5
-			@five = player
-		when 6
-			@six = player
-		when 7
-			@seven = player
-		when 8
-			@eight = player
-		when 9
-			@nine = player
-		else 
-			return
-		end
-		@current_board = ["\e[4m#{@one}\e[0m|","\e[4m#{@two}\e[0m|","\e[4m#{@three}\e[0m\n","\e[4m#{@four}\e[0m|","\e[4m#{@five}\e[0m|","\e[4m#{@six}\e[0m\n","#{@seven}|","#{@eight}|","#{@nine}\n"]
-		@current_board.each do |b|
-			print b
-		end
-	end
-
-	def positions
-		puts "\e[4m1\e[0m|\e[4m2\e[0m|\e[4m3\e[0m\n\e[4m4\e[0m|\e[4m5\e[0m|\e[4m6\e[0m\n7|8|9"
-	end
+class Score
+	attr_accessor :player, :robot
 end
 
 class String
 	def slow
 		each_char {|c| putc c ; sleep 0.05; $stdout.flush }
-	end
-end
-
-class Chatter
-	attr_reader :name
-
-	def explain_board
-		"The board consists of nine positions represented by the numbers 1 through 9.\n".slow
-		"When it is your turn to play, simply enter the number of the open position you wish to play and then press Enter.\n".slow
-	end
-
-	def greeting
-		"Hello! Welcome to TicTacToe. What is your name? ".slow
-		@name = gets.chomp
-		"Hello, #{@name}! My, you look \e[1msmashing\e[0m today!\n".slow
-		"I'm going to start off by showing you the playing board.\n".slow
-		board = Board.new
-		board.positions
 	end
 end
 
