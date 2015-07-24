@@ -12,50 +12,6 @@ class Game
 		@preferred_spaces = [5,1,3,7,9,2,4,6,8]
 	end
 
-	def start
-		greet = Chatter.new
-		greet.greeting
-		greet.explain_board
-		ready?
-	end
-
-	def ready?
-		"Ready to play (y/n)? ".slow
-		@ready = gets.chomp.downcase
-		if @ready == "y"
-			puts "Great!"
-			goes_first?
-		else
-			ready?
-		end
-	end
-
-	def goes_first?
-		"Would you like to go first (y/n)? ".slow
-		@first = gets.chomp.downcase
-		if @first == "y"
-			"Great, you can go first!\n".slow
-			choose
-		elsif @first == "n"
-			"Okay, I will go first!\n".slow
-			@first = false
-			robot_turn
-		else
-			goes_first?
-		end
-	end
-
-	def choose
-		"Choose an available position (1-9).\n".slow
-		@choice = gets.chomp
-		if @choice.match /^([1-9]?)$/
-			"You chose #{@choice}.\n".slow
-			add_choice
-		else
-			choose
-		end
-	end
-
 	def add_choice
 		if @available.include? @choice.to_i
 			"#{@choice} is available!\n".slow
@@ -85,16 +41,14 @@ class Game
 		end
 	end
 
-	def play_again?
-		"Would you like to play again (y/n)? ".slow
-		play = gets.chomp.downcase
-		if play == "y"
-			initialize
-			goes_first?
-		elsif play == "n"
-			exit
+	def choose
+		"Choose an available position (1-9).\n".slow
+		@choice = gets.chomp
+		if @choice.match /^([1-9]?)$/
+			"You chose #{@choice}.\n".slow
+			add_choice
 		else
-			play_again?
+			choose
 		end
 	end
 
@@ -108,6 +62,47 @@ class Game
 		end
 	end
 
+	def goes_first?
+		"Would you like to go first (y/n)? ".slow
+		@first = gets.chomp.downcase
+		if @first == "y"
+			"Great, you can go first!\n".slow
+			choose
+		elsif @first == "n"
+			"Okay, I will go first!\n".slow
+			@first = false
+			robot_turn
+		else
+			goes_first?
+		end
+	end
+
+	def play_again?
+		"Would you like to play again (y/n)? ".slow
+		play = gets.chomp.downcase
+		if play == "y"
+			initialize
+			"Here is a reminder of what the board looks like:\n".slow
+			@board.positions
+			goes_first?
+		elsif play == "n"
+			exit
+		else
+			play_again?
+		end
+	end
+
+	def ready?
+		"Ready to play (y/n)? ".slow
+		@ready = gets.chomp.downcase
+		if @ready == "y"
+			puts "Great!"
+			goes_first?
+		else
+			ready?
+		end
+	end
+
 	def robot_turn
 		#loop through winning combos and see if player moves contains 2 of 3. if so, play 3rd space.  if not, play 1st preferred space available.
 		@choice = nil
@@ -116,7 +111,6 @@ class Game
 		@winning_combos.each do |wc|
 			@remainder = wc - @robot_moves
 			if @remainder.size == 1 && @available.include?(@remainder[0])
-				puts "I'm going to win! Play #{@remainder[0]}"
 				@choice = @remainder[0]
 				break
 			end
@@ -126,7 +120,6 @@ class Game
 		@winning_combos.each do |wc|
 			@remainder = wc - @player_moves
 			if @remainder.size == 1 && @available.include?(@remainder[0])
-				puts "Player is about to win! Play #{@remainder[0]}"
 				@choice = @remainder[0]
 				break
 			end
@@ -149,6 +142,12 @@ class Game
 		choose #player's turn
 	end
 
+	def start
+		greet = Chatter.new
+		greet.greeting
+		greet.explain_board
+		ready?
+	end
 end
 
 class Board
@@ -167,10 +166,6 @@ class Board
 
 	def clean
 		puts "_|_|_\n_|_|_\n | | "
-	end
-
-	def positions
-		puts "\e[4m1\e[0m|\e[4m2\e[0m|\e[4m3\e[0m\n\e[4m4\e[0m|\e[4m5\e[0m|\e[4m6\e[0m\n7|8|9"
 	end
 
 	def play(position, player)
@@ -201,6 +196,10 @@ class Board
 			print b
 		end
 	end
+
+	def positions
+		puts "\e[4m1\e[0m|\e[4m2\e[0m|\e[4m3\e[0m\n\e[4m4\e[0m|\e[4m5\e[0m|\e[4m6\e[0m\n7|8|9"
+	end
 end
 
 class String
@@ -210,22 +209,21 @@ class String
 end
 
 class Chatter
-	attr_accessor :name, :board
-
-	def greeting
-		"Hello! Welcome to TicTacToe. What is your name? ".slow
-		@name = gets.chomp
-		"Hello, #{@name}! My, you look \e[1msmashing\e[0m today!\n".slow
-		"I'm going to start off by showing you the playing board.\n".slow
-		@board = Board.new
-		board.positions
-	end
+	attr_reader :name
 
 	def explain_board
 		"The board consists of nine positions represented by the numbers 1 through 9.\n".slow
 		"When it is your turn to play, simply enter the number of the open position you wish to play and then press Enter.\n".slow
 	end
 
+	def greeting
+		"Hello! Welcome to TicTacToe. What is your name? ".slow
+		@name = gets.chomp
+		"Hello, #{@name}! My, you look \e[1msmashing\e[0m today!\n".slow
+		"I'm going to start off by showing you the playing board.\n".slow
+		board = Board.new
+		board.positions
+	end
 end
 
 game = Game.new
