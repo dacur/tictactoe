@@ -25,9 +25,6 @@ class Game
 		if @ready == "y"
 			puts "Great!"
 			goes_first?
-		elsif @ready == 'board'
-			@board.positions
-			ready?
 		else
 			ready?
 		end
@@ -137,7 +134,7 @@ class Game
 
 		#if neither are true, robot will play next best move.
 		if @choice == nil
-			"Nothing to see here. Choosing best remaining space."
+			#"Nothing to see here. Choosing best remaining space."
 			preferred_remaining = @preferred_spaces - (@player_moves + @robot_moves)
 			@choice = preferred_remaining[0]
 		end
@@ -226,7 +223,7 @@ class Chatter
 
 	def explain_board
 		"The board consists of nine positions represented by the numbers 1 through 9.\n".slow
-		"When it is your turn to play, simply enter the number of the open position you wish to play and then press Enter.\n"
+		"When it is your turn to play, simply enter the number of the open position you wish to play and then press Enter.\n".slow
 	end
 
 end
@@ -234,11 +231,4 @@ end
 game = Game.new
 game.start
 
-# @one = @two = @three = @four = @five = @six = @seven = @eight = @nine = " "
-# @five = "X"
-# @five = "O"
-# board = ["\e[4m#{@one}\e[0m|","\e[4m#{@two}\e[0m|","\e[4m#{@three}\e[0m\n","\e[4m#{@four}\e[0m|","\e[4m#{@five}\e[0m|","\e[4m#{@six}\e[0m\n","#{@seven}|","#{@eight}|","#{@nine}\n"]
-# board.each do |b|
-# 	print b
-# end
 
