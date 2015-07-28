@@ -124,9 +124,19 @@ class Game
 	def game_over
 		if @current_player == "player"
 			puts "You win!"
+			if @score.player.nil?
+				@score.player = 0
+			end
+			@score.player += 1
+			@score.current.slow
 			play_again?
 		else
 			puts "Haha, I win!"
+			if @score.robot.nil?
+				@score.robot = 0
+			end
+			@score.robot += 1
+			@score.current.slow
 			play_again?
 		end
 	end
@@ -215,6 +225,7 @@ class Game
 		greet = Chatter.new
 		greet.greeting
 		greet.explain_board
+		@score = Score.new
 		ready?
 	end
 end
@@ -225,6 +236,18 @@ end
 
 class Score
 	attr_accessor :player, :robot
+	def plural(points)
+		if points == 1
+		    "1 point"
+		elsif points == nil
+			"0 points"
+		else
+		    "#{points} points"
+		end
+	end
+	def current
+		"Here's the score. You have #{plural(@player)}. I have #{plural(@robot)}.\n"
+	end
 end
 
 class String
@@ -235,5 +258,4 @@ end
 
 game = Game.new
 game.start
-
 
