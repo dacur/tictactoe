@@ -51,7 +51,7 @@ class Board
 	end
 end
 
-class Chatter
+class Intro
 	def explain_board
 		"The board consists of nine positions represented by the numbers 1 through 9.\n".slow
 		"When it is your turn to play, simply enter the number of the open position you wish to play and then press Enter.\n".slow
@@ -218,16 +218,12 @@ class Game
 	end
 
 	def start
-		greet = Chatter.new
+		greet = Intro.new
 		greet.greeting
 		greet.explain_board
 		@score = Score.new
 		ready?
 	end
-end
-
-class Player
-	attr_accessor :name
 end
 
 class Score
