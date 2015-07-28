@@ -52,8 +52,6 @@ class Board
 end
 
 class Chatter
-	attr_reader :name
-
 	def explain_board
 		"The board consists of nine positions represented by the numbers 1 through 9.\n".slow
 		"When it is your turn to play, simply enter the number of the open position you wish to play and then press Enter.\n".slow
@@ -128,17 +126,14 @@ class Game
 				@score.player = 0
 			end
 			@score.player += 1
-			@score.current.slow
-			play_again?
 		else
 			puts "Haha, I win!"
 			if @score.robot.nil?
 				@score.robot = 0
 			end
 			@score.robot += 1
-			@score.current.slow
-			play_again?
 		end
+		play_again?
 	end
 
 	def goes_first?
@@ -157,6 +152,7 @@ class Game
 	end
 
 	def play_again?
+		@score.current.slow
 		"Would you like to play again (y/n)? ".slow
 		play = gets.chomp.downcase
 		if play == "y"
